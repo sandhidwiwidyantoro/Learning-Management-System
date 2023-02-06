@@ -1,0 +1,125 @@
+﻿@{
+    Layout = "_LayoutTrainer";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    $.ajax({
+        url: "https://localhost:7230/api/BatchClass/id?id="+@ViewBag.id,
+        type: "GET",
+    }).done((result) => {
+        console.log(result)
+        let temp = "";
+            temp += '<option selected value="' + result.data.tokenKelas + '">' + result.data.tokenKelas + ' - ' + result.data.noBatch + ' - ' + result.data.namaBatch +
+                ' - ' + result.data.jenisKelas + '</option>';
+            console.log(temp);
+        $("#inputTokenKelas").html(temp);
+        console.log(temp)
+    }).fail((error) => {
+        console.log(error)
+    })
+</script>
+<button type="button" class="btn btn-primary mb-20" data-bs-toggle="modal" data-bs-target="#modalInsert" style="margin-bottom:10px">
+    Insert
+</button>
+
+<table id="materi" class="table align-items-center mb-0" style="width:100%">
+    <thead>
+        <tr>
+            <th class="text-uppercase text-black-50">No</th>
+            <th class="text-uppercase text-black-50">Nama_Materi</th>
+            <th class="text-uppercase text-black-50">Judul</th>
+            <th class="text-uppercase text-black-50">Nama_File</th>
+            <th class="text-uppercase text-black-50">Token_Kelas</th>
+            <th class="text-uppercase text-black-50">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="modalInsert" tabindex="-1" aria-labelledby="modalInsert" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="namaHeader">Insert Data</h5>
+                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formValidation" action="https://localhost:7230/api/Materi/UploadMateri" method="post" enctype="multipart/form-data" onsubmit="Insert()">
+                    <input type="number" name="Id" hidden class="form-control" id="inputId">
+                    <div class="mb-3">
+                        <label for="inputNamaMateri" class="form-label">Nama Materi</label>
+                        <input type="text" name="NamaMateri" class="form-control" id="inputNamaMateri" placeholder="Example: Fundamental_Programming" style="height:36px;font-size:15px; width:100%">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputJudul" class="form-label">Judul</label>
+                        <input type="text" name="Judul" class="form-control" id="inputJudul" placeholder="Example: Array" style="height:36px;font-size:15px; width:100%">
+                    </div>
+                    <div class="mb-3" id="menghilang">
+                        <label for="inputNamaFile" class="form-label" >Nama File</label>
+                        <input type="file" name="files" id="inputfile">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputDescMateri" class="form-label">Desc Materi</label>
+                        <textarea type="text" class="form-control" name="DescMateri" id="inputDescMateri" style="min-width: 100%" placeholder="Example: Deskripsi"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-group">
+                            <label for="pwd">Token Kelas:</label>
+                            <select class="form-control" name="TokenKelas" id="inputTokenKelas"></select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success" style="float: right" id="showsubmit" >Submit</button>
+                    <button type="submit" class="btn btn-primary" style="float: right" id="btnEdit">Edit</button>
+                    <button type="reset" class="btn btn-secondary mr-1" style="float: right" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Trainer/datatables-materi.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#materi').DataTable({
+            ajax: {
+                url: "https://localhost:7230/api/Materi/tokenkelas?tokenkelas=" + @ViewBag.id,
+                dataType: "Json",
+                dataSrc: "data"
+            },
+            columns: [
+                {
+                    "data": null, "sortable": false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    "data": "namaMateri"
+                },
+                {
+                    "data": "judul"
+                },
+                {
+                    "data": "namaFile",
+                    render: function (data, type, row) {
+                        return '<a href="../../Materi/'+data+'" download>'+data+'</a>';
+                    }
+                },
+                {
+                    "data": "tokenKelas"
+                },
+                {
+                    "data": "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" onclick="Update(\'${data}'\)" class="btn btn-success" style="width: 100px" data-bs-toggle="modal" data-bs-target="#modalInsert">Edit</button>
+                                                <button type="button" onclick="Delete(\'${data}'\)" class="btn btn-danger"  style="width: 100px">Hapus</button>`;
+                    }
+                },
+            ]
+        });
+    });
+</script>

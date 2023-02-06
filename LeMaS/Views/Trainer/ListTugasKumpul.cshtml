@@ -1,0 +1,150 @@
+﻿@*@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_LayoutTrainer";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<table id="listtugas" class="table align-items-center mb-0" style="width:100%">
+    <thead>
+        <tr>
+            <th class="text-uppercase text-black-50">No</th>
+            <th class="text-uppercase text-black-50">Id Peserta</th>
+            <th class="text-uppercase text-black-50">Nama File</th>
+            <th class="text-uppercase text-black-50">Nilai</th>
+            <th class="text-uppercase text-black-50">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<a href="/Trainer" class="btn btn-primary">Kembali</a>
+
+<!-- Modal -->
+<div class="modal fade" id="modalInsert" tabindex="-1" aria-labelledby="modalInsert" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="namaHeader">Masukkan Nilai</h5>
+                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+            </div>
+            <div class="modal-body">
+                <form id="formValidation" action="" method="post" onsubmit="UpdateNilais()">
+                    <input type="text" name="id" id="id" hidden />
+                    <input type="text" name="namaFile" id="namafile" hidden />
+                    <input type="text" name="idTugas" id="idTugas" hidden />
+                    <input type="text" name="idPeserta" id="idPeserta" hidden />
+                    <div class="mb-3">
+                        <label for="inputNamaMateri" class="form-label">Nilai</label>
+                        <input type="number" name="nilai" class="form-control" id="inputnilai" placeholder="Example: 100" style="height:36px;font-size:15px; width:100%">
+                    </div>
+                    <button type="submit" class="btn btn-success" style="float: right">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#listtugas').DataTable({
+            ajax: {
+                url: "https://localhost:7230/api/ParticipantTugas/TugasByIdTugas?idTugas=" + @ViewBag.id,
+                dataType: "Json",
+                dataSrc: "data"
+            },
+            columns: [
+                {
+                    "data": null, "sortable": false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    "data": "idPeserta"
+                },
+                {
+                    "data": "namaFile",
+                    render: function (data, type, row) {
+                        return '<a href="../../ParticipantTugas/' + data + '" download>' + data + '</a>';
+                    }
+                },
+                {
+                    "data": "nilai"
+                },
+                {
+                    "data": "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" onclick="UpdateNilai(\'${data}'\)" class="btn btn-success" style="width: 100px" data-bs-toggle="modal" data-bs-target="#modalInsert">Beri Nilai</button>`;
+                    }
+                },
+            ]
+        });
+    });
+
+    function UpdateNilai(id) {
+        $.ajax({
+            url: "https://localhost:7230/api/ParticipantTugas/id?id=" + id,
+            success: function (result) {
+                console.log(result.data);
+            }
+        }).done((result) => {
+            $("#id").val(result.data.id);
+            $("#namafile").val(result.data.namaFile);
+            $("#idTugas").val(result.data.idTugas);
+            $("#idPeserta").val(result.data.idPeserta);
+            $("#inputnilai").val(result.data.nilai);
+
+        }).fail((err) => {
+            console.log(err);
+        })
+    }
+
+    function UpdateNilais() {
+
+        //var obj = new Object();
+        //obj.id = parseInt($("#id").val());
+        //obj.nilai = parseInt($("#inputnilai").val());
+        //obj.namaFile = $("#namafile").val();
+        //obj.idTugas = parseInt($("#idTugas").val());
+        //obj.idPeserta = parseInt($("#idPeserta").val());
+        let obj = {
+            id: parseInt($("#id").val()),
+            nilai: parseInt($("#inputnilai").val()),
+            namaFile: $("#namafile").val(),
+            idTugas: parseInt($("#idTugas").val()),
+            idPeserta: parseInt($("#idPeserta").val()),
+        };
+
+        //isi dari object kalian buat sesuai dengan bentuk object yang akan di post
+        $.ajax({
+            url: "https://localhost:7230/api/ParticipantTugas",
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(obj),
+            success: Swal.fire({
+                text: 'Anda Berhasil Registrasi',
+                icon: 'success',
+                timer: 2000,
+                timerProgressBar: true
+            }).then(function () {
+                $('#listtugas').DataTable().ajax.reload();
+            })
+        }).done((result) => {
+            console.log(result)
+            //buat alert pemberitahuan jika success
+            Swal.fire({
+                text: 'Berhasil simpan data',
+                icon: 'success'
+            })
+        }).fail((error) => {
+            console.log(error)
+            //alert pemberitahuan jika gagal
+            Swal.fire({
+                text: 'Data gagal disimpan',
+                icon: 'error'
+            });
+        })
+    }
+</script>

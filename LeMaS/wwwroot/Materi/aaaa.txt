@@ -1,0 +1,16 @@
+token kelas
+batch
+nama
+jenis
+
+judul
+nama materi
+
+nik
+nama
+
+hapus
+showcase
+pricing
+blog
+contact 

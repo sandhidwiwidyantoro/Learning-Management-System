@@ -1,0 +1,134 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+
+@{
+    Layout = "_LayoutPeserta";
+    string nik = @HttpContextAccessor.HttpContext.Session.GetString("nik");
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+
+<table id="materi" class="table align-items-center mb-0" style="width:100%">
+    <thead>
+        <tr>
+            <th class="text-uppercase text-black-50">No</th>
+            <th class="text-uppercase text-black-50">Judul</th>
+            <th class="text-uppercase text-black-50">Nama Tugas</th>
+            <th class="text-uppercase text-black-50">Desc Tugas</th>
+            <th class="text-uppercase text-black-50">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="modalInsert" tabindex="-1" aria-labelledby="modalInsert" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="namaHeader">Insert Data</h5>
+                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+            </div>
+            <div class="modal-body">
+                <form id="formValidation" action="https://localhost:7230/api/ParticipantTugas/UploadKumpulTugas" method="post" enctype="multipart/form-data" onsubmit="Kumpul()">
+                    <input type="text" name="Id" class="form-control" id="inputId" hidden>
+                    <input type="text" class="form-control" value="@nik" name="Id" id="idPeserta" hidden>
+                    <div class="mb-3">
+                        <label for="inputNamaFile" class="form-label">Nama File</label>
+                        <input type="file" name="files" id="inputfile">
+                    </div>
+                    <button type="submit" class="btn btn-success" style="float: right">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let filename = "";
+
+    $('#inputfile').change(function () {
+        filename = this.files[0].name;
+    });
+
+    function Update(id) {
+        $.ajax({
+            url: "https://localhost:7230/api/Tugas/id?id=" + id,
+            success: function (result) {
+                console.log(result);
+            }
+        }).done((result) => {
+            $("#inputId").val(result.data.id);
+        }).fail((err) => {
+            console.log(err);
+        })
+    }
+
+    function Kumpul() {
+        var obj = new Object();
+        obj.Id = 0;
+        obj.Nilai = 0;
+        obj.NamaFile = filename;
+        obj.IdTugas = parseInt($("#inputId").val());
+        obj.IdPeserta = $("#idPeserta").val();
+            console.log(obj);
+        //isi dari object kalian buat sesuai dengan bentuk object yang akan di post
+        $.ajax({
+            url: "https://localhost:7230/api/ParticipantTugas/",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(obj)//jika terkena 415 unsupported media type (tambahkan headertype Json & JSON.Stringify();)
+        }).done((result) => {
+            //buat alert pemberitahuan jika success
+            Swal.fire({
+                text: 'Berhasil simpan data',
+                icon: 'success',
+                timer: 2000,
+                timerProgressBar: true
+            });
+        }).fail((error) => {
+            //alert pemberitahuan jika gagal
+            Swal.fire({
+                text: 'Data gagal disimpan',
+                icon: 'error',
+                timerProgressBar: true
+            });
+        })
+    }
+
+    $(document).ready(function () {
+        $('#materi').DataTable({
+            ajax: {
+                url: "https://localhost:7230/api/ParticipantTugas/TugasBelum?idpeserta="+@nik+"&tokenkelas="+@ViewBag.id,
+                dataType: "Json",
+                dataSrc: "data"
+            },
+            columns: [
+                {
+                    "data": null, "sortable": false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    "data": "judul"
+                },
+                {
+                    "data": "namaTugas"
+                },
+                {
+                    "data": "descTugas"
+                },
+                {
+                    "data": "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" onclick="Update(\'${data}'\)" class="btn btn-success" style="width: 100px" data-bs-toggle="modal" data-bs-target="#modalInsert">Upload Tugas</button>`;
+                    }
+                },
+            ]
+        });
+    });
+</script>

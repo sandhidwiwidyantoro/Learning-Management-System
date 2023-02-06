@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<!-- GET DATA -->
+<script>
+    $.ajax({
+        url: "https://localhost:7230/api/Employee/GetIdByRole?role=1",
+        type: "GET",
+    }).done((result) => {
+        let temp = "";
+        temp += "<option selected disabled> Pilih PIC</option>`";
+        for (var i = 0; i < result.data.length; i++) {
+            temp += '<option value="' + result.data[i].nik + '">' + result.data[i].nik + ' - ' + result.data[i].firstName 
+            + ' '+ result.data[i].lastName + '</option>';
+        }
+        $("#inputPIC").html(temp);
+    }).fail((error) => {
+        console.log(error)
+    })
+</script>
+
+<div class="col-12">
+    <div class="card mb-4">
+        <div class="card-header bg-primary pb-0">
+            <center>
+                <strong><h3 class="text-white">Batch Class</h3></strong>
+            </center>
+            <!-- Button trigger modal -->
+        </div>
+        <div class="mt-2" style="margin-left: 16px">
+            <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal" data-bs-target="#modalInsert">
+                Insert
+            </button>
+        </div>
+        <div class="card-body px-0 pt-0 pb-">
+            <div class="table-responsive p-3">
+                <table id="kelas" class="table align-items-center justify-content-center mb-0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="text-uppercase text-black-50">No</th>
+                            <th class="text-uppercase text-black-50">Token Kelas</th>
+                            <th class="text-uppercase text-black-50">No Batch</th>
+                            <th class="text-uppercase text-black-50">Nama Batch</th>
+                            <th class="text-uppercase text-black-50">Jenis Kelas</th>
+                            <th class="text-uppercase text-black-50">PIC</th>
+                            <th class="text-uppercase text-black-50">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalInsert" tabindex="-1" aria-labelledby="modalInsert" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="namaHeader">Insert Data</h5>
+                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formValidation" action="" method="post">
+                    <div class="mb-3">
+                        <label for="inputTokenKelas" class="form-label">Token Kelas</label>
+                        <input type="number" name="TokenKelas" class="form-control" id="inputTokenKelas" placeholder="Example: 18xxxxx" style="height:36px;font-size:15px; width:100%">
+                    </div>                    
+                    <div class="mb-3">
+                        <label for="inputNoBatch" class="form-label">No Batch</label>
+                        <input type="number" name="NoBatch" class="form-control" id="inputNoBatch" placeholder="Example: 73" style="height:36px;font-size:15px; width:100%">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputNamaBatch" class="form-label">Nama Batch</label>
+                        <input type="text" name="NamaBatch" class="form-control" id="inputNamaBatch" placeholder="Example: MCC" style="height:36px;font-size:15px; width:100%">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputJenisKelas" class="form-label">Jenis Kelas</label>
+                        <input type="text" name="JenisKelas" class="form-control" id="inputJenisKelas" placeholder="Example: .Net" style="height:36px;font-size:15px; width:100%">
+                    </div>
+@*                    <div class="mb-3">
+                        <label for="inputPIC" class="form-label">PIC</label>
+                        <input type="number" name="PIC" class="form-control" id="inputPIC" placeholder="Example: 12xxx" style="height:36px;font-size:15px; width:100%">
+                    </div>*@
+                    <div class="mb-3">
+                        <div class="form-group">
+                            <label for="pwd">PIC :</label>
+                            <select class="form-control" name="PIC" id="inputPIC"></select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success" style="float: right" id="btnSubmit">Submit</button>
+                    <button type="submit" class="btn btn-primary" style="float: right" id="btnEdit">Edit</button>
+                    <button type="reset" class="btn btn-secondary mr-1" style="float: right" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Admin/datatables-batchclass.js" asp-append-version="true"></script>

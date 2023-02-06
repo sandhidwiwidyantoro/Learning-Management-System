@@ -1,0 +1,13 @@
+- home
+- 
+#5533ff
+
+  background: #5533ff;
+  background: linear-gradient(95deg, #5533ff 40%, #25ddf5 100%);
+  padding: 119px 0px 80px 0px;
+
+Trainer
+1. Materi: tambah edit, hapus
+2. Tugas : tambah, edit, hapus
+
+db_lemas

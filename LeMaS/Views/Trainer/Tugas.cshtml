@@ -1,0 +1,145 @@
+﻿@{
+    Layout = "_LayoutTrainer";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<!-- GET DATA -->
+<script>
+    $.ajax({
+        url: "https://localhost:7230/api/Materi/tokenkelas?tokenkelas="+@ViewBag.id,
+        type: "GET",
+    }).done((result) => {
+        let temp = "";
+        temp += "<option selected disabled> Pilih ID Materi</option>`";
+        for (var i = 0; i < result.data.length; i++) {
+            temp += '<option value="' + result.data[i].id + '">' + result.data[i].namaMateri + ' - ' + result.data[i].judul + '</option>';
+        }
+        $("#inputIdMateri").html(temp);
+    }).fail((error) => {
+        console.log(error)
+    })
+</script>
+
+<div class="col-12">
+    <div class="card mb-4">
+        <div class="card-header bg-primary pb-0">
+            <center>
+                <strong><h3 class="text-white">List Tugas</h3></strong>
+            </center>
+        </div>
+        <!-- Button trigger modal -->
+        <div class="mt-2" style="margin-left: 16px">
+            <button type="button" class="btn btn-primary mb-20" data-bs-toggle="modal" data-bs-target="#modalInsert">
+                Insert
+            </button>
+        </div>
+        <div class="card-body px-0 pt-0 pb-">
+            <div class="table-responsive p-3">
+                <table id="tugas" class="table align-items-center justify-content-center mb-0" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="text-uppercase text-black-50">No</th>
+                            <th class="text-uppercase text-black-50">Id</th>
+                            <th class="text-uppercase text-black-50">Nama Tugas</th>
+                            <th class="text-uppercase text-black-50">Judul</th>
+                            <th class="text-uppercase text-black-50">Nama File</th>
+                            <th class="text-uppercase text-black-50">Desc Tugas</th>
+                            <th class="text-uppercase text-black-50">Id Materi</th>
+                            <th class="text-uppercase text-black-50">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalInsert" tabindex="-1" aria-labelledby="modalInsert" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="namaHeader">Tambah Tugas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formValidation" action="" method="post">
+                    <input type="number" name="Id" value="0" hidden class="form-control" id="inputId">
+                    <div class="mb-3">
+                        <label for="inputNamaTugas" class="form-label">Nama Tugas</label>
+                        <input type="text" name="NamaTugas" class="form-control" id="inputNamaTugas" placeholder="Example: Fundamental" style="height:36px;font-size:15px; width:100%">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputJudul" class="form-label">Judul</label>
+                        <input type="text" name="Judul" class="form-control" id="inputJudul" placeholder="Example: Array" style="height:36px;font-size:15px; width:100%">
+                    </div>
+                        <input type="text" name="NamaFile" class="form-control" id="inputNamaFile" placeholder="Example: Nama_Tugas" style="height:36px;font-size:15px; width:100%" value="kosong" hidden>
+                    <div class="mb-3">
+                        <label for="inputDescTugas" class="form-label">DescTugas</label>
+                        <textarea type="text" class="form-control" name="DescTugas" id="inputDescTugas" style="min-width: 100%" placeholder="Example: Deskripsi"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-group">
+                            <label for="pwd">ID Materi</label>
+                            <select class="form-control" name="IdMateri" id="inputIdMateri"></select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success" style="float: right" id="btnSubmit">Submit</button>
+                    <button type="submit" class="btn btn-primary" style="float: right" id="btnEdit">Edit</button>
+                    <button type="reset" class="btn btn-secondary mr-1" style="float: right" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Trainer/datatables-tugas.js"></script>
+<script>
+    $(document).ready(function () {
+        let tables = $('#tugas').DataTable({
+            ajax: {
+                url: "https://localhost:7230/api/Tugas/tokenkelas?tokenkelas=" + @ViewBag.id,
+                dataType: "Json",
+                dataSrc: "data" //need notice, kalau misal API kalian
+            },
+            columns: [ // untuk nampilkan nama kolom di datatable
+                {
+                    //Tugas buat numbering otomatis pada datatables !!!!
+                    "data": null, "sortable": false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    "data": "id"
+                },
+                {
+                    "data": "namaTugas"
+                },
+                {
+                    "data": "judul"
+                },
+                {
+                    "data": "namaFile"
+                },
+                {
+                    "data": "descTugas"
+                },
+                {
+                    "data": "idMateri"
+                },
+                {
+                    "data": "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" onclick="Update(\'${data}'\)" class="btn btn-success" style="width: 100px" data-bs-toggle="modal" data-bs-target="#modalInsert">Edit</button>
+                                    <button type="button" onclick="Delete(\'${data}'\)" class="btn btn-danger"  style="width: 100px">Hapus</button>`;
+                    }
+                },
+            ]
+        });
+    });
+</script>

@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = "_LayoutAwal";
+	string nik = @HttpContextAccessor.HttpContext.Session.GetString("nik");
+}
+
+
+	<div id="buttonstart">
+
+	</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+	$.ajax({
+		type: "GET",
+		url: "https://localhost:7230/api/Participant/nik?nik="+@nik
+	}).done((results) => {
+			$("#buttonstart").html(`<a class="btn btn-primary" href='/Peserta/Materi/${results.data[0].idBatchClass}'>Masuk Kelas</a>`)
+	});
+</script>

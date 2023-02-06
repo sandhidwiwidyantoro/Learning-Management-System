@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{9E9BFDA7-EE68-43F6-8B95-DFB31220D5CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeMaS", "LeMaS\LeMaS.csproj", "{18794EDD-C45D-4B76-9695-3AF020E817FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E9BFDA7-EE68-43F6-8B95-DFB31220D5CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E9BFDA7-EE68-43F6-8B95-DFB31220D5CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E9BFDA7-EE68-43F6-8B95-DFB31220D5CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E9BFDA7-EE68-43F6-8B95-DFB31220D5CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18794EDD-C45D-4B76-9695-3AF020E817FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18794EDD-C45D-4B76-9695-3AF020E817FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18794EDD-C45D-4B76-9695-3AF020E817FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18794EDD-C45D-4B76-9695-3AF020E817FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F3C87FE3-B263-4302-B8A3-B5F1C8FB8B4E}
+	EndGlobalSection
+EndGlobal

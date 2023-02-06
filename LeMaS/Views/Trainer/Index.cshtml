@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = "_LayoutAwal";
+    string nik = @HttpContextAccessor.HttpContext.Session.GetString("nik");
+}
+<div id="card">
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $.ajax({
+        url: "https://localhost:7230/api/BatchClass/pic?nik=" + @nik,
+        type: "GET",
+    }).done((result) => {
+        console.log(result)
+        let temp = "<div class='row'>";
+        for (var i = 0; i < result.data.length; i++) {
+            temp += `<a style="text-decoration:none" href="/Trainer/Materi/${result.data[i].tokenKelas}"><div class="card mx-2" style="width: 18rem;">
+                        <div class="header" style="width:100%; display:grid; place-items:center; height:200px">
+                                <div style="font-size:100px; background-color: #a0f799; border-radius:50%; color:white; width:75%; text-align:center" >${result.data[i].noBatch}</div>
+                        </div>
+                        <div class="card-body">
+                                <h5 align="center" class="card-title">${result.data[i].namaBatch}</h5>
+                        </div>
+                    </div></a>`;
+        }
+        temp += "<div>";
+        $("#card").html(temp)
+    }).fail((error) => {
+        console.log(error)
+    })
+</script>

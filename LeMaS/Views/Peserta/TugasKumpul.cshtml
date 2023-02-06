@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+}
+
+@{
+    Layout = "_LayoutPeserta";
+    string nik = @HttpContextAccessor.HttpContext.Session.GetString("nik");
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+
+<table id="materi" class="table align-items-center mb-0" style="width:100%">
+    <thead>
+        <tr>
+            <th class="text-uppercase text-black-50">No</th>
+            <th class="text-uppercase text-black-50">Judul</th>
+            <th class="text-uppercase text-black-50">Nama Tugas</th>
+            <th class="text-uppercase text-black-50">Nama File</th>
+            <th class="text-uppercase text-black-50">Desc Tugas</th>
+            <th class="text-uppercase text-black-50">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+<script>
+    $.ajax({
+        url: "https://localhost:7230/api/ParticipantTugas/TugasBeres?idpeserta=" + @nik+"&tokenkelas=" + @ViewBag.id,
+        type: "GET",
+    }).done((result) => {
+        console.log(result)
+    }).fail((error) => {
+        console.log(error)
+    })
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#materi').DataTable({
+            ajax: {
+                url: "https://localhost:7230/api/ParticipantTugas/TugasBeres?idpeserta=" + @nik+"&tokenkelas=" + @ViewBag.id,
+                dataType: "Json",
+                dataSrc: "data"
+            },
+            columns: [
+                {
+                    "data": null, "sortable": false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    "data": "judul"
+                },
+                {
+                    "data": "namaTugas"
+                },
+                {
+                    "data": "descTugas"
+                },
+                {
+                    "data": "namaFile",
+                    render: function (data, type, row) {
+                        return '<a href="../../ParticipantTugas/'+data+'" download>'+data+'</a>';
+                    }
+                },
+                {
+                    "data": "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" onclick="Delete(\'${data}'\)" class="btn btn-danger"  style="width: 100px">Hapus</button>`;
+                    }
+                },
+            ]
+        });
+    });
+
+    const Delete = (id) => {
+        console.log(id)
+        Swal.fire({
+            title: 'Yakin Ingin Menghapus ',
+            text: 'File Tidak Bisa Di Kembalikan (Pastikan memberikan (1) File Baru)!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Hapus'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: `https://localhost:7230/api/ParticipantTugas?id=${id}`,
+                    success: () => {
+                        Swal.fire(
+                            'Deleted',
+                            'Employee has been deleted.',
+                            'success'
+                        )
+                        $('#materi').DataTable().ajax.reload()
+                    },
+                    error: () => {
+                        Swal.fire(
+                            'Failed',
+                            'Error deleting employee',
+                            'error'
+                        )
+                    }
+                })
+            }
+        })
+    }
+</script>

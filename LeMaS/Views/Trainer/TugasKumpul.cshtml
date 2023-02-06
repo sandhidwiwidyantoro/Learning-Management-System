@@ -1,0 +1,34 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_LayoutTrainer";
+}
+
+<div class="link" id="link">
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $.ajax({
+        url: "https://localhost:7230/api/Tugas/tokenkelas?tokenkelas=" + @ViewBag.id,
+        type: "GET",
+    }).done((result) => {
+        console.log(result)
+        let temp = "";
+        for (var i = 0; i < result.data.length; i++) {
+            temp += `<a href="/Trainer/ListTugasKumpul/${result.data[i].id}" style="width:100%; color:black; margin:10px; text-decoration:none">
+                                    <div class="card">
+                                        <div class="card-body" style="text-align:left">
+                                                    ${result.data[i].judul} | ${result.data[i].namaTugas}
+                                                    <div style="float:right">Klik Untuk Lebih Detail</div>
+                                        </div>
+                                    </div></a>`;
+            console.log(temp);
+        }
+        $("#link").html(temp);
+    }).fail((error) => {
+        console.log(error)
+    })
+</script>

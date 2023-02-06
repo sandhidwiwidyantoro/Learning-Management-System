@@ -1,0 +1,6 @@
+minimal 2 role user
+
+ERD
+BPMN
+USECASE
+FLOWCHART

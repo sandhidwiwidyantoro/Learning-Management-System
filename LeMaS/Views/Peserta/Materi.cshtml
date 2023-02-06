@@ -1,0 +1,78 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_LayoutPeserta";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<div class="link" id="link">
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modalInsert" tabindex="-1" aria-labelledby="modalInsert" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="namaHeader"><span id="judul"></span></h5>
+                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+            </div>
+            <div class="modal-body">
+                <p>Nama Materi : <span id="namaMateri"></span></p>
+                <p>File Materi : <span id="fileMateri"></span></p>
+                <p>Deskripsi Materi : <span id="descMateri"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $.ajax({
+        url: "https://localhost:7230/api/Materi/tokenkelas?tokenkelas=" + @ViewBag.id,
+        type: "GET",
+    }).done((result) => {
+        console.log(result)
+    }).fail((error) => {
+        console.log(error)
+    })
+    function Details(id) {
+        $.ajax({
+            url: "https://localhost:7230/api/Materi/id?id=" + id
+        }).done((result) => {
+            $("#judul").html(result.data.judul);
+            console.log(result.data.judul)
+            $("#namaMateri").html(result.data.namaMateri);
+
+            $("#fileMateri").html('<a href="../../Materi/' + result.data.namaFile + '" download>' + result.data.namaFile + '</a>');
+
+            $("#descMateri").html(result.data.descMateri);
+        }).fail((err) => {
+            console.log(err);
+        })
+    }
+</script>
+
+<script>
+    $.ajax({
+        url: "https://localhost:7230/api/Materi/tokenkelas?tokenkelas=" + @ViewBag.id,
+        type: "GET",
+    }).done((result) => {
+        console.log(result)
+        let temp = "";
+        for (var i = 0; i < result.data.length; i++) {
+            temp += `<button type="button" onclick="Details(\'${result.data[i].id}'\)" data-bs-toggle="modal" data-bs-target="#modalInsert" style="width:100%; background-color:none; border:none; margin:10px">
+                                <div class="card">
+                                    <div class="card-body" style="text-align:left">
+                                                ${result.data[i].judul} | ${result.data[i].namaMateri}
+                                                <div style="float:right">Klik Untuk Lebih Detail</div>
+                                    </div>
+                                </div></button>`;
+            console.log(temp);
+        }
+        $("#link").html(temp);
+    }).fail((error) => {
+        console.log(error)
+    })
+</script>
